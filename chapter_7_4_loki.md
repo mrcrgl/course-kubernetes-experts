@@ -38,6 +38,8 @@ deploymentMode: SingleBinary
 loki:
   commonConfig:
     replication_factor: 1
+  config:
+    auth_enabled: false
   storage:
     type: 'filesystem'
   schemaConfig:
@@ -67,42 +69,12 @@ helm upgrade \
     loki grafana/loki
 ```
 
-# Install Fluentd for log scraping
+# Install Promtail for log scraping
 
-
-```bash
-helm repo add fluent https://fluent.github.io/helm-charts
-helm repo update
-```
-
-Helm Values file: `fluentd_values.yaml`
-
-```yaml
-plugins: 
-- fluent-plugin-grafana-loki
-configMapConfigs:
-- fluentd-prometheus-conf
-- fluentd-systemd-conf
-fileConfigs:
-  04_outputs.conf: |-
-    <label @OUTPUT>
-      <match **>
-        @type loki
-        url "http://loki.observability.svc.cluster.local:3100"
-        # extra_labels {"env":"dev"}
-        label_keys "app,job,namespace,pod"
-        flush_interval 10s
-        flush_at_shutdown true
-        buffer_chunk_limit 1m
-        headers {"X-Scope-OrgID": "ACME"}
-      </match>
-    </label>
-```
 
 ```bash
 helm upgrade -n observability \
     --install --atomic --wait \
-    --values fluentd_values.yaml \
-    fluentd fluent/fluentd
+    promtail grafana/promtail
 ```
 

@@ -135,7 +135,7 @@ chmod +x /usr/local/bin/kubectl-calico
 kubectl calico -h
 ```
 
-# Install ingress controller
+# Install Helm
 
 ```bash
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -145,6 +145,7 @@ sudo apt-get update
 sudo apt-get install helm
 ```
 
+# Install ingress controller
 
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx

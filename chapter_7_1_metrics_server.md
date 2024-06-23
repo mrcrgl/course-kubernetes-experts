@@ -7,10 +7,12 @@ Observability is not related to it.
 helm repo add metrics-server \
     https://kubernetes-sigs.github.io/metrics-server/
 
+helm repo update
+
 # Note that this deployment skips tls verification 
 # and is not suited for productive use
 helm upgrade -n kube-system \
-    --install \
+    --install --atomic --wait \
     --set args[0]=--kubelet-insecure-tls \
     metrics-server metrics-server/metrics-server
 ```

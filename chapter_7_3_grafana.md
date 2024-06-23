@@ -60,7 +60,7 @@ helm upgrade -n observability \
 
 ```bash
 # Get admin password
-kubectl get secret --n observability \
+kubectl get secret -n observability \
     grafana \
     -o jsonpath="{.data.admin-password}" | \
     base64 --decode ; echo

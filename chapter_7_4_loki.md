@@ -31,7 +31,7 @@ EOF
 
 ## Configure the Chart for our Test environment
 
-Safe this content to a file on the servers filesystem:
+Save this content to a file on the servers filesystem: `loki_values.yaml`
 
 ```yaml
 deploymentMode: SingleBinary
@@ -63,7 +63,7 @@ write:
 helm upgrade \
     -n observability \
     --install --atomic --wait \
-    --values values.yaml \
+    --values loki_values.yaml \
     loki grafana/loki
 ```
 

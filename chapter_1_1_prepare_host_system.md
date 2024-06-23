@@ -165,6 +165,27 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 kubectl label node $HOSTNAME node-role.kubernetes.io/worker=worker
 ```
 
+# Install CNI (Calico)
+
+```bash
+# Install the operator
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/custom-resources.yaml
+
+# Check pods are running
+kubectl -n tigera-operator get po
+kubectl -n calico-system get po
+```
+
+```bash
+# Install kubectl plugin
+curl -L https://github.com/projectcalico/calico/releases/download/v3.28.0/calicoctl-linux-amd64 -o /usr/local/bin/kubectl-calico
+chmod +x /usr/local/bin/kubectl-calico
+
+# Verify
+kubectl calico -h
+```
+
 # Install ingress controller
 
 ```bash
@@ -191,6 +212,15 @@ helm upgrade -n ingress-nginx --create-namespace \
     --set controller.hostPort.enabled=true \
     --set controller.extraArgs.publish-status-address=127.0.0.1 \
     ingress-nginx ingress-nginx/ingress-nginx
+```
+
+```bash
+# Disable HSTS for local development
+kubectl patch configmap/ingress-nginx-controller \
+  -n ingress-nginx \
+  --type merge \
+  -p '{"data":{"hsts":"false"}}'
+
 ```
 
 # Optional

@@ -38,8 +38,7 @@ deploymentMode: SingleBinary
 loki:
   commonConfig:
     replication_factor: 1
-  config:
-    auth_enabled: false
+  auth_enabled: false
   storage:
     type: 'filesystem'
   schemaConfig:
@@ -78,3 +77,11 @@ helm upgrade -n observability \
     promtail grafana/promtail
 ```
 
+
+# Test if Loki captures data
+
+```bash
+kubectl port-forward --namespace observability svc/loki-gateway 3100:80 &
+
+curl "http://127.0.0.1:3100/loki/api/v1/query_range" --data-urlencode 'query={job="test"}'
+```

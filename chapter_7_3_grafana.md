@@ -66,6 +66,11 @@ kubectl get secret -n observability \
     base64 --decode ; echo
 ```
 
+## Setup up sources
+
+For Prometheus: http://prometheus-server
+For Loki: http://loki:3100
+
 ## Import basic dashboard
 
 Example: https://grafana.com/grafana/dashboards/18283-kubernetes-dashboard/

@@ -1,9 +1,3 @@
-### **1. Pod-to-Pod Communication & Services**
-
-**Introduction:**
-This session explores how pods communicate with each other within a Kubernetes cluster, using different service types to facilitate connectivity. The session includes hands-on exercises on configuring ClusterIP and Headless Services for pod-to-pod communication.
-
-```markdown
 # Pod-to-Pod Communication & Services - Hands-On
 
 ## ClusterIP and Headless Services

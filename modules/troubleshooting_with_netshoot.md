@@ -1,9 +1,3 @@
-### **4. Network Troubleshooting with Netshoot**
-
-**Introduction:**
-This session uses the Netshoot container for troubleshooting network issues such as connectivity, DNS resolution, and network policy effects. Participants will deploy Netshoot alongside an application to diagnose common networking issues.
-
-```markdown
 # Network Troubleshooting with Netshoot - Hands-On
 
 ## Deploying Netshoot and Diagnosing Connectivity

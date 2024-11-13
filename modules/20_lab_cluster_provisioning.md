@@ -52,21 +52,21 @@ sudo systemctl restart containerd
 ### Preparing the Host System
 
 ```bash
-# Prepare os
-sudo sysctl -w net.ipv4.ip_forward=1
-sudo sysctl -w net.ipv6.conf.all.forwarding=1
+sudo tee /etc/modules-load.d/containerd.conf <<EOF
+overlay
+br_netfilter
+EOF
+sudo modprobe overlay
+sudo modprobe br_netfilter
 
-# or
-echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
-sudo vim /etc/sysctl.conf
+sudo tee /etc/sysctl.d/kubernetes.conf <<EOT
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+net.ipv6.conf.all.forwarding = 1
+EOT
 
-# Uncomment the next line to enable packet forwarding for IPv4
-#net.ipv4.ip_forward=1
-
-# Uncomment the next line to enable packet forwarding for IPv6
-#  Enabling this option disables Stateless Address Autoconfiguration
-#  based on Router Advertisements for this host
-#net.ipv6.conf.all.forwarding=1
+sudo sysctl --system
 
 ```
 

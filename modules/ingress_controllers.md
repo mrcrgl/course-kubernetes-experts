@@ -1,9 +1,3 @@
-### **2. Ingress Controllers & Load Balancers**
-
-**Introduction:**
-This session covers the setup and configuration of an Ingress resource to manage external access, including load balancing across multiple pods. Participants will deploy an application and configure Ingress to provide path-based routing and external access.
-
-```markdown
 # Ingress Controllers & Load Balancers - Hands-On
 
 ## Ingress for Path-Based Routing

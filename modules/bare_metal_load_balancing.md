@@ -1,9 +1,3 @@
-### **3. Bare-Metal Load Balancing with MetalLB**
-
-**Introduction:**
-MetalLB is used to provide load balancing on bare-metal Kubernetes clusters where cloud-based load balancers are unavailable. In this hands-on, we configure MetalLB in Layer 2 mode.
-
-```markdown
 # Bare-Metal Load Balancing with MetalLB - Hands-On
 
 ## Configuring MetalLB with Layer 2 Mode
@@ -33,5 +27,3 @@ data:
 1. Deploy MetalLB with `kubectl apply -f <URL>`.
 2. Apply the ConfigMap to configure IP allocation.
 3. Deploy a service of type `LoadBalancer`, such as `nginx`, and confirm it receives an external IP within the specified range.
-
-

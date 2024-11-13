@@ -1,12 +1,14 @@
-# Installation
+# Lab Cluster Installation
 
-## Prepare system packages
+## Repeat Steps to process for controller and worker
+
+### Prepare system packages
 
 ```bash
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg net-tools
 ```
 
-## Install kubernetes basis
+### Install kubernetes basis
 
 ```bash
 # If the directory `/etc/apt/keyrings` does not exist, it should be created before the curl command, read the note below.
@@ -28,7 +30,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl enable --now kubelet
 ```
 
-## Install container runtime (CRI)
+### Install container runtime (CRI)
 
 ```bash
 # Install container runtime
@@ -44,14 +46,15 @@ sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/c
 
 ```bash
 sudo systemctl enable --now containerd
+sudo systemctl restart containerd
 ```
 
-## Vorbereitung des Systems
+### Preparing the Host System
 
 ```bash
 # Prepare os
-sysctl -w net.ipv4.ip_forward=1
-sysctl -w net.ipv6.conf.all.forwarding=1
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo sysctl -w net.ipv6.conf.all.forwarding=1
 
 # or
 echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
@@ -72,20 +75,22 @@ sudo vim /etc/sysctl.conf
 cat /proc/swaps
 ```
 
-```bash
-sudo reboot
-```
-
-## Init Kubernetes (kubeadm)
+### On Controller: Init Kubernetes (kubeadm)
 
 ```bash
 # Switch to user root for next steps
 sudo su -
 ```
 
+**Please note the pod CIDR!!!**
+- 
+- For Flannel: 10.244.0.0/16
+- For Calico: 192.168.0.0/16
+
 ```bash
 # We're using the default settings here
 kubeadm init --pod-network-cidr=10.88.0.0/16
+
 
 # Copy admin kubeconfig
 mkdir -p $HOME/.kube
@@ -106,7 +111,7 @@ kubectl -n kube-system get po
 # It's a good time to grab a coffee
 ```
 
-### Only on single node clusters
+#### Only on single node clusters
 
 ```bash
 # Untaint control plane to allow pod scheduling
@@ -114,20 +119,20 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 kubectl label node $HOSTNAME node-role.kubernetes.io/worker=worker
 ```
 
-# Install CNI
-
-Please choose one of:
-
-- [Bridge (minimal)](./cni/cni_basic_bridge.md)
-- [Calico](./cni/cni_calico.md)
-
-Verify everything works. We do this by checking if CoreDNS is running.
+### On Worker: Join the Controller
 
 ```bash
-kubectl -n kube-system get po
+# On controller
+kubeadm token create --print-join-command
+
+# The output should look similar to:
+# kubeadm join 172.31.34.137:6443 --token rd63k2.57kji98mnx0rd0rl \
+#	--discovery-token-ca-cert-hash sha256:e57127a24e89ec612eb681af5a2ea4d51c2f8a901003c9d3ee1f11121667ff87 
+
+# Run the command on each node you want to join
 ```
 
-# Install Helm
+### Install Helm (optional, recommended)
 
 ```bash
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -137,72 +142,16 @@ sudo apt-get update
 sudo apt-get install helm
 ```
 
-# Install ingress controller
+### Install CNI
+
+Please choose one of:
+
+- [Bridge (minimal)](./cni/cni_basic_bridge.md)
+- [Calico](../cni/cni_calico.md)
+
+Verify everything works. We do this by checking if CoreDNS is running.
 
 ```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-```
-
-```bash
-helm upgrade -n ingress-nginx --create-namespace \
-    --install --wait --atomic \
-    --set controller.kind=DaemonSet \
-    --set controller.ingressClass=default \
-    --set controller.watchIngressWithoutClass=true \
-    --set controller.service.enabled=false \
-    --set controller.hostPort.enabled=true \
-    --set controller.extraArgs.publish-status-address=127.0.0.1 \
-    ingress-nginx ingress-nginx/ingress-nginx
-```
-
-```bash
-# Disable HSTS for local development
-kubectl patch configmap/ingress-nginx-controller \
-  -n ingress-nginx \
-  --type merge \
-  -p '{"data":{"hsts":"false"}}'
-
-```
-
-# Optional
-
-## Setup local storage class
-
-```bash
-cat << EOF | kubectl apply -f -
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: local-storage
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
-EOF
-```
-
-### Install etcdctl
-
-For debugging purposes, I suggeest installing etcdctl.
-
-```bash
-# Install etcdctl
-ETCD_VER=v3.4.33
-
-# choose either URL
-GOOGLE_URL=https://storage.googleapis.com/etcd
-GITHUB_URL=https://github.com/etcd-io/etcd/releases/download
-DOWNLOAD_URL=${GOOGLE_URL}
-
-rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
-rm -rf /tmp/etcd-download-test && mkdir -p /tmp/etcd-download-test
-
-curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
-tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
-rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
-
-/tmp/etcd-download-test/etcd --version
-/tmp/etcd-download-test/etcdctl version
-
-sudo cp /tmp/etcd-download-test/etcdctl /usr/local/bin
+kubectl -n kube-system get po
 ```
 

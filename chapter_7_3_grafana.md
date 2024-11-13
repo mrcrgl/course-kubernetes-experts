@@ -53,6 +53,22 @@ helm upgrade -n observability \
     --create-namespace \
     --set ingress.enabled=true \
     --set ingress.hosts[0]=$GRAFANA_HOST \
+    --set ingress.tls[0].secretName=grafana-tls \
+    --set ingress.tls[0].hosts[0]=$GRAFANA_HOST \
+    --set persistence.enabled=true \
+    grafana grafana/grafana \
+    --install
+```
+
+
+```bash
+export GRAFANA_HOST="grafana.kubernetes.local"
+helm upgrade -n observability \
+    --wait \
+    --atomic \
+    --create-namespace \
+    --set service.type=LoadBalancer \
+    --set service.ipFamilyPolicy=PreferDualStack \
     --set persistence.enabled=true \
     grafana grafana/grafana \
     --install

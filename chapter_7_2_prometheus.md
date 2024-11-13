@@ -72,13 +72,15 @@ helm repo update
 ```
 
 ```bash
-export PROMETHEUS_HOST="prometheus.kubernetes.local"
+export PROMETHEUS_HOST="prometheus.hl.fifj.net"
 helm upgrade -n observability \
     --wait \
     --atomic \
     --create-namespace \
     --set server.ingress.enabled=true \
     --set server.ingress.hosts[0]=$PROMETHEUS_HOST \
+    --set server.ingress.tls[0].secretName=prometheus-server-tls \
+    --set server.ingress.tls[0].hosts[0]=$PROMETHEUS_HOST \
     prometheus prometheus-community/prometheus \
     --install
 ```

@@ -2,6 +2,12 @@
 
 ## ClusterIP and Headless Services
 
+### Deploy nginx
+
+```bash
+kubectl apply -f https://k8s.io/examples/application/deployment.yaml
+```
+
 ### ClusterIP Service
 A `ClusterIP` service provides a stable, internal IP within the cluster, allowing pods to connect to other services consistently.
 

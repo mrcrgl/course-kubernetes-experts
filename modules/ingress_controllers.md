@@ -40,4 +40,8 @@ spec:
 2. Apply the Ingress configuration and verify access by simulating requests to `http://example.com/app1` and `http://example.com/app2`.
 3. Optionally, add a TLS certificate for HTTPS.
 
+## Expose Service using NodePort
 
+```bash
+kubectl expose deployment nginx-deployment --type=NodePort --port=80
+```

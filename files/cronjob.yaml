@@ -4,16 +4,16 @@ metadata:
   name: pi
 spec:
   schedule: "* * * * *"
-    jobTemplate:
-      spec:
-        completions: 1
-        parallelism: 1
-        ttlSecondsAfterFinished: 60
-        template:
-          spec:
-            containers:
-            - name: pi
-              image: perl:5.34.0
-              command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
-            restartPolicy: Never
-        backoffLimit: 4
+  jobTemplate:
+    spec:
+      completions: 1
+      parallelism: 1
+      ttlSecondsAfterFinished: 60
+      template:
+        spec:
+          containers:
+          - name: pi
+            image: perl:5.34.0
+            command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+          restartPolicy: Never
+      backoffLimit: 4

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: test-nginx
+  template:
+    metadata:
+      labels:
+        app: test-nginx
+      annotations:
+        description: "Hello World"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.26

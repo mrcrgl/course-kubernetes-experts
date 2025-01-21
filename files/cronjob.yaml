@@ -6,8 +6,8 @@ spec:
   schedule: "* * * * *"
     jobTemplate:
       spec:
-        completions: 10
-        parallelism: 2
+        completions: 1
+        parallelism: 1
         ttlSecondsAfterFinished: 60
         template:
           spec:

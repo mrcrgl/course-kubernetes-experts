@@ -40,7 +40,13 @@ wrk -d 300 $(minikube service test-nginx --url)
 ### Watch Scaling
 
 ```bash
-kubectl get hpa
-kubectl top po
-kubectl get po
+# Terminal 1
+watch -n 1 kubectl get hpa
+
+# Terminal 2
+watch -n 1 kubectl top po
+
+# Terminatl 3
+watch -n 1 kubectl get po
+
 ```

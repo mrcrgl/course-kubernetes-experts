@@ -34,7 +34,7 @@ kubectl get service
 sudo apt install wrk
 
 # produce load
-wrk -d 300 $(minikube service test-nginx --url)
+wrk -d 300s $(minikube service test-nginx --url)
 ```
 
 ### Watch Scaling
